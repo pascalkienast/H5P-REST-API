@@ -1,8 +1,8 @@
-# H5P Examples Server
+# H5P REST API Server
 
 This repository contains a feature-rich H5P server implementation that allows you to create, edit, and share interactive HTML5 content.
 
-> **IMPORTANT**: This project is specifically focused on the application provided through the `packages/h5p-examples` directory. All instructions and documentation in this README refer to working with this example server implementation.
+> **IMPORTANT**: This project is specifically focused on the application provided through the `packages/h5p-main` directory. All instructions and documentation in this README refer to working with this example server implementation.
 
 ## Prerequisites
 
@@ -27,31 +27,41 @@ npm install
 
 This installation process will:
 - Install all required dependencies
-- Build all packages in the correct order (including the h5p-examples package)
+- Build all packages in the correct order (including the h5p-main package)
 - Download the necessary H5P core files
 - Update the content type cache
 
-### 3. Building the H5P Examples Server
+### 3. Building the H5P Main Server
 
-While the postinstall script should automatically build all packages, you can also build just the h5p-examples package if needed:
+While the postinstall script should automatically build all packages, you can also build just the h5p-main package if needed:
 
 ```bash
-# Build only the h5p-examples package
-npm run build:h5p-examples
+# Build only the h5p-main package
+npm run build:h5p-main
 
 # Alternatively, navigate to the package directory and build
-cd packages/h5p-examples && npm run build
+cd packages/h5p-main && npm run build
 ```
 
-### 4. Start the H5P Examples Server
+### 4. Start the H5P Main Server
 
-The H5P Examples Server provides a complete UI with content editor and player:
+The H5P Main Server provides a complete UI with content editor and player:
 
 ```bash
 npm start
 ```
 
 This will start the default example server at `http://localhost:8080`.
+
+### Alternative: Start the REST API Server
+
+If you prefer to use the REST API server with API key authentication:
+
+```bash
+npm run start:rest:server
+```
+
+This will start the REST API server at `http://localhost:8080`, which can be accessed using API keys.
 
 ## Features
 
@@ -62,7 +72,7 @@ This will start the default example server at `http://localhost:8080`.
 - Full integration with H5P Hub
 - Mobile-friendly interface
 
-## Using the H5P Examples Server
+## Using the H5P Main Server
 
 ### Creating Content
 
@@ -145,7 +155,7 @@ The server behavior can be customized using environment variables:
 You can set environment variables in several ways:
 
 1. **Using a .env file** (recommended):
-   - Create a `.env` file in the `packages/h5p-examples/` directory (not in the root directory)
+   - Create a `.env` file in the `packages/h5p-main/` directory (not in the root directory)
    - Add your environment variables, one per line:
      ```
      SHOW_AVAILABLE_CONTENT=true
@@ -162,203 +172,3 @@ You can set environment variables in several ways:
    export SHOW_AVAILABLE_CONTENT=true
    npm start
    ```
-
-## API Access
-
-The server provides a comprehensive REST API for working with H5P content programmatically. This section covers the basics of API authentication and usage.
-
-### API Authentication
-
-All API endpoints can be accessed using API key authentication. To authenticate, include your API key in the request headers:
-
-```bash
-# Example API request with authentication
-curl -X GET "http://localhost:8080/h5p/libraries" \
-  -H "Accept: application/json" \
-  -H "x-api-key: YOUR_API_KEY"
-```
-
-### API Key Management
-
-#### Predefined API Keys
-
-The server includes several predefined API keys with different permission levels:
-
-| API Key | User ID | Permissions | Role |
-|---------|---------|------------|------|
-| API_KEY_1 | api_user_1 | read, write | teacher |
-| API_KEY_2 | api_user_2 | read | student |
-| API_KEY_ADMIN | api_admin | read, write, admin | admin |
-
-#### Adding Custom API Keys
-
-You can add your own API keys in two ways:
-
-1. **Adding to the api-keys.json file**:
-   - Create or edit the file at `packages/h5p-rest-example-server/api-keys.json`
-   - Use this structure:
-
-```json
-{
-  "keys": {
-    "YOUR_NEW_API_KEY": {
-      "userId": "your_user_id",
-      "name": "Your User Name",
-      "permissions": ["read", "write"]
-    }
-  }
-}
-```
-
-2. **Using environment variables**:
-
-```bash
-# Format: H5P_API_KEY_USER_ID=API_KEY_VALUE
-H5P_API_KEY_YOUR_USER_ID=YOUR_NEW_API_KEY
-```
-
-For example, to add a key for a teacher user:
-
-```bash
-H5P_API_KEY_TEACHER123=MY_SECURE_API_KEY_VALUE
-```
-
-### Basic API Endpoints
-
-Here are some commonly used API endpoints:
-
-#### Content Types/Libraries
-
-```bash
-# List all available content types
-curl -X GET "http://localhost:8080/h5p/libraries" \
-  -H "Accept: application/json" \
-  -H "x-api-key: YOUR_API_KEY"
-
-# Get details for a specific content type
-curl -X GET "http://localhost:8080/h5p/libraries/H5P.InteractiveVideo-1.27" \
-  -H "Accept: application/json" \
-  -H "x-api-key: YOUR_API_KEY"
-
-# Install a content type
-curl -X POST "http://localhost:8080/h5p/libraries/install" \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
-  -d '{
-    "machineName": "H5P.InteractiveVideo",
-    "majorVersion": 1,
-    "minorVersion": 27,
-    "patchVersion": 9
-  }'
-```
-
-#### Content Management
-
-```bash
-# Create new H5P content
-curl -X POST "http://localhost:8080/h5p/new" \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
-  -d '{
-    "library": "H5P.MultiChoice 1.16",
-    "params": {
-      "metadata": {
-        "title": "API Test Question",
-        "license": "U"
-      },
-      "params": {
-        "question": "What does H5P stand for?",
-        "answers": [
-          {"text": "HTML5 Package", "correct": true},
-          {"text": "Hyper Programming", "correct": false}
-        ]
-      }
-    }
-  }'
-
-# Get content parameters
-curl -X GET "http://localhost:8080/h5p/params/{contentId}" \
-  -H "Accept: application/json" \
-  -H "x-api-key: YOUR_API_KEY"
-
-# View/play content
-curl -X GET "http://localhost:8080/h5p/play/{contentId}" \
-  -H "x-api-key: YOUR_API_KEY"
-
-# Download content as H5P package
-curl -X GET "http://localhost:8080/h5p/download/{contentId}" \
-  -H "x-api-key: YOUR_API_KEY" \
-  --output content.h5p
-```
-
-### JavaScript Client Example
-
-```javascript
-// Function to fetch content using API key
-async function fetchH5PContent(contentId) {
-  const response = await fetch(`http://localhost:8080/h5p/play/${contentId}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'x-api-key': 'YOUR_API_KEY'
-    }
-  });
-  
-  return response.json();
-}
-
-// Function to create new content
-async function createH5PContent(libraryName, params) {
-  const response = await fetch('http://localhost:8080/h5p/new', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'x-api-key': 'YOUR_API_KEY'
-    },
-    body: JSON.stringify({
-      library: libraryName,
-      params: params
-    })
-  });
-  
-  return response.json();
-}
-```
-
-### Security Best Practices
-
-1. **API Key Protection**: Keep your API keys secure and never expose them in client-side code.
-2. **HTTPS**: Always use HTTPS in production to prevent API keys from being intercepted.
-3. **Key Rotation**: Rotate API keys periodically for better security.
-4. **Permission Levels**: Use the minimum permission level required for each API key.
-
-### Production Configuration
-
-For production environments, it's recommended to require API keys for all requests:
-
-```bash
-# Set NODE_ENV to production
-export NODE_ENV=production
-
-# Specify allowed origins for CORS if needed
-export ALLOWED_ORIGINS="https://yourdomain.com,https://anotherdomain.com"
-```
-
-For complete API documentation, including all available endpoints and response formats, see [API_DOC.md](API_DOC.md).
-
-For details about the REST API implementation and advanced configuration options, see [API Key Usage](packages/h5p-rest-example-server/API_KEY_USAGE.md).
-
-## Advanced Configuration
-
-For production use, consider:
-
-1. Configuring authentication
-2. Setting up proper CORS restrictions
-3. Using a production-grade database
-
-For details about the REST API version (less user-friendly but programmable), see the [REST API documentation](packages/h5p-rest-example-server/README.md).
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

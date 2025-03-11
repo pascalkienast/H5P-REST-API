@@ -3,21 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [10.0.4](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v10.0.3...v10.0.4) (2025-03-08)
+## [10.0.4](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v10.0.3...v10.0.4) (2024-03-08)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [10.0.3](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v10.0.2...v10.0.3) (2025-03-08)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [10.0.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v10.0.1...v10.0.2) (2025-03-07)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [10.0.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v10.0.0...v10.0.1) (2025-03-06)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 # [10.0.0](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.3.2...v10.0.0) (2025-03-05)
 
@@ -89,7 +89,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.3.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.3.1...v9.3.2) (2023-09-20)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [9.3.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.3.0...v9.3.1) (2023-09-01)
 
@@ -176,7 +176,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.1.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.1.1...v9.1.2) (2022-03-19)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [9.1.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.1.0...v9.1.1) (2022-03-12)
 
@@ -210,7 +210,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **deps:** update dependency dotenv to v12 ([#2034](https://github.com/Lumieducation/H5P-Nodejs-library/issues/2034)) ([a40ad6f](https://github.com/Lumieducation/H5P-Nodejs-library/commit/a40ad6fb70656af4e40193a9bd5ae40c28bd360c))
 - **deps:** update dependency i18next to v21.6.7 ([7e7e4ef](https://github.com/Lumieducation/H5P-Nodejs-library/commit/7e7e4efb1e0a5c456427b1fb92f800075fd8002c))
 
-## [9.0.8](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.7...v9.0.8) (2022-01-14)
+## [9.0.8](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.7...v9.0.9) (2022-01-14)
 
 ### Bug Fixes
 
@@ -229,9 +229,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.0.5](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.4...v9.0.5) (2021-11-22)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
-## [9.0.4](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.3...v9.0.4) (2021-11-17)
+## [9.0.4](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.3...v9.0.5) (2021-11-17)
 
 ### Bug Fixes
 
@@ -244,7 +244,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.0.3](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.2...v9.0.3) (2021-09-24)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [9.0.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.1...v9.0.2) (2021-09-21)
 
@@ -254,7 +254,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.0.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v9.0.0...v9.0.1) (2021-09-16)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 # [9.0.0](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.2.0...v9.0.0) (2021-09-11)
 
@@ -287,7 +287,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [8.1.6](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.1.5...v8.1.6) (2021-08-18)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [8.1.5](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.1.4...v8.1.5) (2021-08-18)
 
@@ -306,11 +306,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [8.1.3](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.1.2...v8.1.3) (2021-07-13)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [8.1.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.1.1...v8.1.2) (2021-07-11)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [8.1.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.1.0...v8.1.1) (2021-07-08)
 
@@ -333,7 +333,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [8.0.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v8.0.0...v8.0.1) (2021-05-11)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 # [8.0.0](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v7.5.2...v8.0.0) (2021-05-07)
 
@@ -389,7 +389,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [7.3.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v7.3.0...v7.3.1) (2021-03-14)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 # [7.3.0](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v7.2.0...v7.3.0) (2021-03-14)
 
@@ -418,12 +418,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [7.0.2](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v7.0.1...v7.0.2) (2021-02-18)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 ## [7.0.1](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v7.0.0...v7.0.1) (2021-02-18)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main
 
 # [7.0.0](https://github.com/Lumieducation/H5P-Nodejs-library/compare/v6.2.0...v7.0.0) (2021-02-18)
 
-**Note:** Version bump only for package @lumieducation/h5p-examples
+**Note:** Version bump only for package @lumieducation/h5p-main

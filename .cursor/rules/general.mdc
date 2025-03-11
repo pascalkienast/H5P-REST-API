@@ -7,8 +7,8 @@ alwaysApply: false
 # Your rule content
 
 > **IMPORTANT**: 
-This project is specifically focused on the application provided through the `packages/h5p-examples` directory. 
-All instructions and documentation in the README.md for example should only focus working with this example server implementation.
+This project is specifically focused on the application provided through the `packages/h5p-main` directory. 
+All instructions and documentation in the README.md for example should only focus working with this "example" server implementation.
 
 DO NOT confuse this with other packages!
 All documentation, code changes, and development are focused on working with the UI-based example server implementation.
