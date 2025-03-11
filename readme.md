@@ -127,6 +127,29 @@ The server behavior can be customized using environment variables:
 | `TEMPORARY_ROOT_DIR` | Directory for temporary files | `./h5p/temporary-files` |
 | `LIBRARY_ROOT_DIR` | Directory for H5P libraries | `./h5p/libraries` |
 
+### Setting Environment Variables
+
+You can set environment variables in several ways:
+
+1. **Using a .env file** (recommended):
+   - Create a `.env` file in the `packages/h5p-examples/` directory (not in the root directory)
+   - Add your environment variables, one per line:
+     ```
+     SHOW_AVAILABLE_CONTENT=true
+     PORT=3000
+     ```
+
+2. **Setting variables inline when running commands**:
+   ```bash
+   SHOW_AVAILABLE_CONTENT=true npm start
+   ```
+
+3. **Setting variables in your shell session**:
+   ```bash
+   export SHOW_AVAILABLE_CONTENT=true
+   npm start
+   ```
+
 ## API Access
 
 The server also provides API access for advanced users. For detailed API documentation, see [API_DOC.md](API_DOC.md).
