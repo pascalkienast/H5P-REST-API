@@ -23,14 +23,13 @@ cd H5P-AI-Generator
 npm install
 ```
 
-### 3. Build the Packages
+This installation process will:
+- Install all required dependencies
+- Build all packages in the correct order
+- Download the necessary H5P core files
+- Update the content type cache
 
-```bash
-npm run bootstrap
-npm run build:packages
-```
-
-### 4. Start the H5P Examples Server
+### 3. Start the H5P Examples Server
 
 The H5P Examples Server provides a complete UI with content editor and player:
 
@@ -38,7 +37,17 @@ The H5P Examples Server provides a complete UI with content editor and player:
 npm start
 ```
 
-The server will be available at: `http://localhost:8080`
+This will start the default example server at `http://localhost:8080`.
+
+### Alternative: Start the REST API Server
+
+If you prefer to use the REST API server with API key authentication:
+
+```bash
+npm run start:rest:server
+```
+
+This will start the REST API server at `http://localhost:8080`, which can be accessed using API keys.
 
 ## Features
 
@@ -182,6 +191,8 @@ The server includes several predefined API keys with different permission levels
 You can add your own API keys in two ways:
 
 1. **Adding to the api-keys.json file**:
+   - Create or edit the file at `packages/h5p-rest-example-server/api-keys.json`
+   - Use this structure:
 
 ```json
 {
@@ -198,7 +209,14 @@ You can add your own API keys in two ways:
 2. **Using environment variables**:
 
 ```bash
+# Format: H5P_API_KEY_USER_ID=API_KEY_VALUE
 H5P_API_KEY_YOUR_USER_ID=YOUR_NEW_API_KEY
+```
+
+For example, to add a key for a teacher user:
+
+```bash
+H5P_API_KEY_TEACHER123=MY_SECURE_API_KEY_VALUE
 ```
 
 ### Basic API Endpoints
@@ -339,4 +357,4 @@ For details about the REST API version (less user-friendly but programmable), se
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
