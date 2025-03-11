@@ -17,3 +17,37 @@ export default class ExampleUser implements IUser {
 
     public type: 'local';
 }
+
+/**
+ * Creates an ExampleUser from API key user information
+ * @param apiKeyUser User information from the API key
+ * @returns An ExampleUser instance
+ */
+export function createUserFromApiKey(apiKeyUser: { 
+    userId: string; 
+    name: string; 
+    permissions?: string[];
+}): ExampleUser {
+    // Determine the user role based on permissions
+    let role: 'anonymous' | 'teacher' | 'student' | 'admin' = 'anonymous';
+    
+    if (apiKeyUser.permissions) {
+        if (apiKeyUser.permissions.includes('admin')) {
+            role = 'admin';
+        } else if (apiKeyUser.permissions.includes('write')) {
+            role = 'teacher';
+        } else if (apiKeyUser.permissions.includes('read')) {
+            role = 'student';
+        }
+    }
+    
+    // Create a simple email based on the user ID
+    const email = `${apiKeyUser.userId}@api.example.com`;
+    
+    return new ExampleUser(
+        apiKeyUser.userId,
+        apiKeyUser.name,
+        email,
+        role
+    );
+}

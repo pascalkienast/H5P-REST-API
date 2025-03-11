@@ -20,6 +20,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@anthropic-ai/sdk": "^0.39.0",
         "@fortawesome/fontawesome-free": "^6.4.0",
         "@lumieducation/h5p-clamav-scanner": "^10.0.4",
         "@lumieducation/h5p-express": "^10.0.4",

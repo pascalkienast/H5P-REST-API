@@ -1,0 +1,19 @@
+{
+    "keys": {
+        "API_KEY_1": {
+            "userId": "api_user_1",
+            "name": "API User 1",
+            "permissions": ["read", "write"]
+        },
+        "API_KEY_2": {
+            "userId": "api_user_2",
+            "name": "API User 2",
+            "permissions": ["read"]
+        },
+        "API_KEY_ADMIN": {
+            "userId": "api_admin",
+            "name": "API Admin",
+            "permissions": ["read", "write", "admin"]
+        }
+    }
+} 

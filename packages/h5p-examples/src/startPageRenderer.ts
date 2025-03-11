@@ -22,14 +22,19 @@ export default function render(
             <script src="/require.js"></script>
             <link rel="stylesheet" href="/bootstrap.min.css">
             <link rel="stylesheet" href="/fontawesome-free/css/all.min.css">
-            <title>H5P NodeJs Demo</title>
+            <title>H5P API Server</title>
         </head>
         <body>
             <div class="container">
-                <h1>H5P NodeJs Demo</h1>
-                <div class="alert alert-warning">This demo is for debugging and demonstration purposes only and not suitable for production use!</div>                
+                <h1>H5P REST API Server</h1>
+                <div class="alert alert-info">
+                    <p>This server provides a REST API for H5P content. Access the API endpoints with the prefix <code>/h5p/</code></p>
+                    <p>For API documentation and usage instructions, please refer to the <a href="https://github.com/Lumieducation/H5P-Nodejs-library">GitHub repository</a> and the HOWTO.md file.</p>
+                    <p>Authentication: API endpoints can be accessed using API keys in the request header: <code>x-api-key: YOUR_API_KEY</code></p>
+                </div>
+                
                 <h2>
-                    <span class="fa fa-file"></span> Existing content
+                    <span class="fa fa-file"></span> Available Content
                 </h2>
                 <a class="btn btn-primary my-2" href="${
                     editor.config.baseUrl
@@ -85,9 +90,28 @@ export default function render(
                     .join('')}
                 </div>
                 <hr/>
-                <div id="content-type-cache-container"></div>
+                <h3>API Endpoints</h3>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5>GET /h5p/libraries</h5>
+                        <p>Get a list of all available content types/libraries</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h5>POST /h5p/new</h5>
+                        <p>Create new H5P content</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h5>GET /h5p/play/:contentId</h5>
+                        <p>Play/display H5P content</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h5>GET /h5p/edit/:contentId</h5>
+                        <p>Edit existing H5P content</p>
+                    </div>
+                </div>
                 <hr/>
-                <div id="library-admin-container"></div>
+                <div id="content-type-cache-container" style="display: none;"></div>
+                <div id="library-admin-container" style="display: none;"></div>
             </div>
 
             <script>

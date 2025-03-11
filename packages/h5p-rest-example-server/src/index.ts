@@ -10,6 +10,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import session from 'express-session';
 import csurf from '@dr.pogodin/csurf';
+import cors from 'cors';
 
 import {
     h5pAjaxExpressRouter,
@@ -17,9 +18,12 @@ import {
     contentTypeCacheExpressRouter
 } from '@lumieducation/h5p-express';
 
+// Import local API key authentication middleware
+import { apiKeyAuth, ApiKeyManager } from './middleware';
+
 import * as H5P from '@lumieducation/h5p-server';
 import restExpressRoutes from './routes';
-import ExampleUser from './ExampleUser';
+import ExampleUser, { createUserFromApiKey } from './ExampleUser';
 import createH5PEditor from './createH5PEditor';
 import { displayIps, clearTempFiles } from './utils';
 import ExamplePermissionSystem from './ExamplePermissionSystem';
@@ -202,6 +206,17 @@ const start = async (): Promise<void> => {
     // We now set up the Express server in the usual fashion.
     const server = express();
 
+    // Configure CORS for external API access
+    const corsOptions = {
+        origin: process.env.NODE_ENV === 'production' 
+            ? process.env.ALLOWED_ORIGINS?.split(',') || [] // In production, specify allowed origins
+            : '*', // In development, allow all origins
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Accept', 'x-api-key'],
+        credentials: true // Allow cookies for session-based auth if needed
+    };
+    server.use(cors(corsOptions));
+
     server.use(bodyParser.json({ limit: '500mb' }));
     server.use(
         bodyParser.urlencoded({
@@ -236,6 +251,19 @@ const start = async (): Promise<void> => {
     server.use(passport.initialize());
     server.use(passport.session());
 
+    // Initialize API key authentication
+    // Create a new API key manager that loads keys from the file
+    const apiKeyManager = new ApiKeyManager({
+        configFile: path.resolve('api-keys.json'),
+        // You can also load API keys from environment variables with this prefix
+        envPrefix: 'H5P_API_KEY',
+        // In development, you can allow requests without API keys
+        allowNoAuth: process.env.NODE_ENV === 'development'
+    });
+
+    // Create a middleware function to process API key authentication
+    const apiKeyMiddleware = apiKeyAuth(apiKeyManager.getConfig());
+
     // Initialize CSRF protection. If we add it as middleware, it checks if a
     // token was passed into a state altering route. We pass this token to the
     // client in two ways:
@@ -263,9 +291,14 @@ const start = async (): Promise<void> => {
             res,
             next
         ) => {
+            // Check for API key user in the request
+            if ((req as any).user && !(req.user as any).username) {
+                // If the user is from an API key, create an ExampleUser from it
+                req.user = createUserFromApiKey((req as any).user);
+            }
             // Maps the user received from passport to the one expected by
             // h5p-express and h5p-server
-            if (req.user) {
+            else if (req.user) {
                 req.user = new ExampleUser(
                     req.user.username,
                     req.user.name,
@@ -296,6 +329,7 @@ const start = async (): Promise<void> => {
     server.use(
         h5pEditor.config.baseUrl,
         csrfProtection,
+        apiKeyMiddleware,
         h5pAjaxExpressRouter(
             h5pEditor,
             path.resolve('h5p/core'), // the path on the local disc where the
@@ -321,6 +355,7 @@ const start = async (): Promise<void> => {
         // middleware, so that the UrlGenerator can read it when we generate the
         // integration object with the URLs that contain the token.
         addCsrfTokenToUser,
+        apiKeyMiddleware,
         restExpressRoutes(
             h5pEditor,
             h5pPlayer,

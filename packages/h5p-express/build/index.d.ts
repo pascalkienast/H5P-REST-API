@@ -4,4 +4,6 @@ import libraryAdministrationExpressRouter from './LibraryAdministrationRouter/Li
 import contentUserDataExpressRouter from './ContentUserDataRouter/ContentUserDataExpressRouter';
 import contentTypeCacheExpressRouter from './ContentTypeCacheRouter/ContentTypeCacheExpressRouter';
 import finishedDataExpressRouter from './FinishedDataRouter/FinishedDataExpressRouter';
-export { IRequestWithLanguage, IRequestWithUser, IActionRequest, h5pAjaxExpressRouter, libraryAdministrationExpressRouter, contentTypeCacheExpressRouter, contentUserDataExpressRouter, finishedDataExpressRouter };
+import { apiKeyAuth, ApiKeyConfig } from './middleware/apiKeyAuth';
+import { ApiKeyManager, ApiKeyManagerOptions } from './middleware/apiKeyManager';
+export { IRequestWithLanguage, IRequestWithUser, IActionRequest, h5pAjaxExpressRouter, libraryAdministrationExpressRouter, contentTypeCacheExpressRouter, contentUserDataExpressRouter, finishedDataExpressRouter, apiKeyAuth, ApiKeyConfig, ApiKeyManager, ApiKeyManagerOptions };

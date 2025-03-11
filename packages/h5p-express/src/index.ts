@@ -8,6 +8,8 @@ import libraryAdministrationExpressRouter from './LibraryAdministrationRouter/Li
 import contentUserDataExpressRouter from './ContentUserDataRouter/ContentUserDataExpressRouter';
 import contentTypeCacheExpressRouter from './ContentTypeCacheRouter/ContentTypeCacheExpressRouter';
 import finishedDataExpressRouter from './FinishedDataRouter/FinishedDataExpressRouter';
+import { apiKeyAuth, ApiKeyConfig } from './middleware/apiKeyAuth';
+import { ApiKeyManager, ApiKeyManagerOptions } from './middleware/apiKeyManager';
 
 export {
     IRequestWithLanguage,
@@ -17,5 +19,10 @@ export {
     libraryAdministrationExpressRouter,
     contentTypeCacheExpressRouter,
     contentUserDataExpressRouter,
-    finishedDataExpressRouter
+    finishedDataExpressRouter,
+    // API Key Authentication
+    apiKeyAuth,
+    ApiKeyConfig,
+    ApiKeyManager,
+    ApiKeyManagerOptions
 };
