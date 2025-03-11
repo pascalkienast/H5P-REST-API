@@ -8,6 +8,8 @@ function render(editor) {
             content: await editor.contentManager.getContentMetadata(id, req.user),
             id
         })));
+        // Check if available content section should be shown
+        const showAvailableContent = process.env.SHOW_AVAILABLE_CONTENT === 'true';
         res.send(`
         <!doctype html>
         <html>
@@ -27,6 +29,7 @@ function render(editor) {
                     <p>Authentication: API endpoints can be accessed using API keys in the request header: <code>x-api-key: YOUR_API_KEY</code></p>
                 </div>
                 
+                ${showAvailableContent ? `
                 <h2>
                     <span class="fa fa-file"></span> Available Content
                 </h2>
@@ -78,6 +81,16 @@ function render(editor) {
                             </div>`)
             .join('')}
                 </div>
+                ` : `
+                <h2>Content Management</h2>
+                <p>The content listing is hidden by default. To access content management features:</p>
+                <ul>
+                    <li>Create new content: <a href="${editor.config.baseUrl}/new">Create new content</a></li>
+                    <li>Edit content: Access <code>${editor.config.baseUrl}/edit/[contentId]</code> directly</li>
+                    <li>Play content: Access <code>${editor.config.baseUrl}${editor.config.playUrl}/[contentId]</code> directly</li>
+                </ul>
+                <p>To enable the content listing, set the environment variable <code>SHOW_AVAILABLE_CONTENT=true</code></p>
+                `}
                 <hr/>
                 <h3>API Endpoints</h3>
                 <div class="list-group">

@@ -63,6 +63,24 @@ The server will be available at: `http://localhost:8080`
 
 You can view, edit, and delete your H5P content through the web interface.
 
+By default, the list of available content is hidden on the start page for security and clarity. 
+
+To enable the content listing on the start page, set the environment variable:
+
+```bash
+# Show available content on the start page
+export SHOW_AVAILABLE_CONTENT=true
+npm start
+```
+
+This will display all content items with edit, download, and delete buttons on the main page.
+
+Even when content listing is disabled, you can still:
+- Create new content at `/h5p/new`
+- Edit content directly at `/h5p/edit/{contentId}`
+- Play content at `/h5p/play/{contentId}`
+- Download content at `/h5p/download/{contentId}`
+
 ## Troubleshooting
 
 ### Port Already in Use
@@ -95,6 +113,19 @@ To see what content is already in the system:
 ```bash
 curl "http://localhost:8080/" -s | grep "h5p/play"
 ```
+
+## Environment Variables
+
+The server behavior can be customized using environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SHOW_AVAILABLE_CONTENT` | Display the list of available content on the start page | `false` |
+| `PORT` | Port for the server to listen on | `8080` |
+| `H5P_BASE_URL` | Base URL for the H5P server | `/h5p` |
+| `CONTENT_ROOT_DIR` | Directory for storing H5P content | `./h5p/content` |
+| `TEMPORARY_ROOT_DIR` | Directory for temporary files | `./h5p/temporary-files` |
+| `LIBRARY_ROOT_DIR` | Directory for H5P libraries | `./h5p/libraries` |
 
 ## API Access
 
