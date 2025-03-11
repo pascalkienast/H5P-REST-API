@@ -152,7 +152,180 @@ You can set environment variables in several ways:
 
 ## API Access
 
-The server also provides API access for advanced users. For detailed API documentation, see [API_DOC.md](API_DOC.md).
+The server provides a comprehensive REST API for working with H5P content programmatically. This section covers the basics of API authentication and usage.
+
+### API Authentication
+
+All API endpoints can be accessed using API key authentication. To authenticate, include your API key in the request headers:
+
+```bash
+# Example API request with authentication
+curl -X GET "http://localhost:8080/h5p/libraries" \
+  -H "Accept: application/json" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### API Key Management
+
+#### Predefined API Keys
+
+The server includes several predefined API keys with different permission levels:
+
+| API Key | User ID | Permissions | Role |
+|---------|---------|------------|------|
+| API_KEY_1 | api_user_1 | read, write | teacher |
+| API_KEY_2 | api_user_2 | read | student |
+| API_KEY_ADMIN | api_admin | read, write, admin | admin |
+
+#### Adding Custom API Keys
+
+You can add your own API keys in two ways:
+
+1. **Adding to the api-keys.json file**:
+
+```json
+{
+  "keys": {
+    "YOUR_NEW_API_KEY": {
+      "userId": "your_user_id",
+      "name": "Your User Name",
+      "permissions": ["read", "write"]
+    }
+  }
+}
+```
+
+2. **Using environment variables**:
+
+```bash
+H5P_API_KEY_YOUR_USER_ID=YOUR_NEW_API_KEY
+```
+
+### Basic API Endpoints
+
+Here are some commonly used API endpoints:
+
+#### Content Types/Libraries
+
+```bash
+# List all available content types
+curl -X GET "http://localhost:8080/h5p/libraries" \
+  -H "Accept: application/json" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# Get details for a specific content type
+curl -X GET "http://localhost:8080/h5p/libraries/H5P.InteractiveVideo-1.27" \
+  -H "Accept: application/json" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# Install a content type
+curl -X POST "http://localhost:8080/h5p/libraries/install" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "machineName": "H5P.InteractiveVideo",
+    "majorVersion": 1,
+    "minorVersion": 27,
+    "patchVersion": 9
+  }'
+```
+
+#### Content Management
+
+```bash
+# Create new H5P content
+curl -X POST "http://localhost:8080/h5p/new" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "library": "H5P.MultiChoice 1.16",
+    "params": {
+      "metadata": {
+        "title": "API Test Question",
+        "license": "U"
+      },
+      "params": {
+        "question": "What does H5P stand for?",
+        "answers": [
+          {"text": "HTML5 Package", "correct": true},
+          {"text": "Hyper Programming", "correct": false}
+        ]
+      }
+    }
+  }'
+
+# Get content parameters
+curl -X GET "http://localhost:8080/h5p/params/{contentId}" \
+  -H "Accept: application/json" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# View/play content
+curl -X GET "http://localhost:8080/h5p/play/{contentId}" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# Download content as H5P package
+curl -X GET "http://localhost:8080/h5p/download/{contentId}" \
+  -H "x-api-key: YOUR_API_KEY" \
+  --output content.h5p
+```
+
+### JavaScript Client Example
+
+```javascript
+// Function to fetch content using API key
+async function fetchH5PContent(contentId) {
+  const response = await fetch(`http://localhost:8080/h5p/play/${contentId}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'x-api-key': 'YOUR_API_KEY'
+    }
+  });
+  
+  return response.json();
+}
+
+// Function to create new content
+async function createH5PContent(libraryName, params) {
+  const response = await fetch('http://localhost:8080/h5p/new', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'x-api-key': 'YOUR_API_KEY'
+    },
+    body: JSON.stringify({
+      library: libraryName,
+      params: params
+    })
+  });
+  
+  return response.json();
+}
+```
+
+### Security Best Practices
+
+1. **API Key Protection**: Keep your API keys secure and never expose them in client-side code.
+2. **HTTPS**: Always use HTTPS in production to prevent API keys from being intercepted.
+3. **Key Rotation**: Rotate API keys periodically for better security.
+4. **Permission Levels**: Use the minimum permission level required for each API key.
+
+### Production Configuration
+
+For production environments, it's recommended to require API keys for all requests:
+
+```bash
+# Set NODE_ENV to production
+export NODE_ENV=production
+
+# Specify allowed origins for CORS if needed
+export ALLOWED_ORIGINS="https://yourdomain.com,https://anotherdomain.com"
+```
+
+For complete API documentation, including all available endpoints and response formats, see [API_DOC.md](API_DOC.md).
+
+For details about the REST API implementation and advanced configuration options, see [API Key Usage](packages/h5p-rest-example-server/API_KEY_USAGE.md).
 
 ## Advanced Configuration
 
