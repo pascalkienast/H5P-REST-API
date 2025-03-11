@@ -53,16 +53,6 @@ npm start
 
 This will start the default example server at `http://localhost:8080`.
 
-### Alternative: Start the REST API Server
-
-If you prefer to use the REST API server with API key authentication:
-
-```bash
-npm run start:rest:server
-```
-
-This will start the REST API server at `http://localhost:8080`, which can be accessed using API keys.
-
 ## Features
 
 - Create and edit H5P content using the visual editor
