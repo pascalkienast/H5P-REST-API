@@ -13,8 +13,8 @@ This repository contains a feature-rich H5P server implementation that allows yo
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/lumieducation/h5p-nodejs-library.git
-cd h5p-nodejs-library
+git clone https://github.com/pascalkienast/H5P-AI-Generator.git
+cd H5P-AI-Generator
 ```
 
 ### 2. Install Dependencies
