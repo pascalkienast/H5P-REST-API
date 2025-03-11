@@ -2,10 +2,12 @@
 
 This repository contains a feature-rich H5P server implementation that allows you to create, edit, and share interactive HTML5 content.
 
+> **IMPORTANT**: This project is specifically focused on the application provided through the `packages/h5p-examples` directory. All instructions and documentation in this README refer to working with this example server implementation.
+
 ## Prerequisites
 
-- Node.js (v14 or higher)
-- npm (v6 or higher)
+- Node.js (v20 or higher) - check package.json for exact requirements
+- npm (v7 or higher)
 - Git
 
 ## Getting Started
@@ -25,11 +27,23 @@ npm install
 
 This installation process will:
 - Install all required dependencies
-- Build all packages in the correct order
+- Build all packages in the correct order (including the h5p-examples package)
 - Download the necessary H5P core files
 - Update the content type cache
 
-### 3. Start the H5P Examples Server
+### 3. Building the H5P Examples Server
+
+While the postinstall script should automatically build all packages, you can also build just the h5p-examples package if needed:
+
+```bash
+# Build only the h5p-examples package
+npm run build:h5p-examples
+
+# Alternatively, navigate to the package directory and build
+cd packages/h5p-examples && npm run build
+```
+
+### 4. Start the H5P Examples Server
 
 The H5P Examples Server provides a complete UI with content editor and player:
 
