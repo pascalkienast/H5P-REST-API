@@ -240,37 +240,342 @@ The structure of `params.params` depends on the content type being created. For 
 - **Multiple Choice**: Requires a `question` string and an array of `answers`
 - **Drag and Drop**: Requires `question`, `background`, and `dropZones` definitions
 
-### Editing Content
+### Editing H5P Content
 
-To edit existing content:
+**Important Note**: The H5P editing process follows a version-based approach rather than an edit-in-place model. When you "edit" existing content, you're actually creating a new content item with your changes, receiving a new content ID. The original content remains unchanged unless explicitly deleted.
+
+Editing existing H5P content involves several API calls to retrieve, modify, and save the content as a new version. The process typically follows these steps:
+
+#### 1. Retrieving Content for Editing
+
+To edit existing content, first retrieve the current content parameters using the `/h5p/params/{contentId}` endpoint:
 
 ```bash
-# Get content for editing
+# Get content parameters for editing
+curl -X GET "http://localhost:8080/h5p/params/{contentId}" \
+  -H "Accept: application/json"
+```
+
+You can also access the editing interface directly, which will retrieve these parameters automatically:
+
+```bash
+# Get content for editing (loads editor UI)
 curl -X GET "http://localhost:8080/h5p/edit/{contentId}" \
   -H "Accept: application/json"
+```
 
-# Update content
+Example response from the params endpoint for a Multiple Choice content type:
+
+```json
+{
+  "h5p": {
+    "embedTypes": ["iframe"],
+    "language": "en",
+    "license": "U",
+    "mainLibrary": "H5P.MultiChoice",
+    "preloadedDependencies": [
+      {"machineName": "FontAwesome", "majorVersion": 4, "minorVersion": 5},
+      {"machineName": "H5P.JoubelUI", "majorVersion": 1, "minorVersion": 3},
+      {"machineName": "H5P.Transition", "majorVersion": 1, "minorVersion": 0},
+      {"machineName": "H5P.FontIcons", "majorVersion": 1, "minorVersion": 0},
+      {"machineName": "H5P.Question", "majorVersion": 1, "minorVersion": 5},
+      {"machineName": "H5P.MultiChoice", "majorVersion": 1, "minorVersion": 16}
+    ],
+    "title": "OER Grundlagen Quiz"
+  },
+  "library": "H5P.MultiChoice 1.16",
+  "params": {
+    "metadata": {
+      "embedTypes": ["iframe"],
+      "language": "en",
+      "license": "U",
+      "mainLibrary": "H5P.MultiChoice",
+      "preloadedDependencies": [
+        {"machineName": "FontAwesome", "majorVersion": 4, "minorVersion": 5},
+        {"machineName": "H5P.JoubelUI", "majorVersion": 1, "minorVersion": 3},
+        {"machineName": "H5P.Transition", "majorVersion": 1, "minorVersion": 0},
+        {"machineName": "H5P.FontIcons", "majorVersion": 1, "minorVersion": 0},
+        {"machineName": "H5P.Question", "majorVersion": 1, "minorVersion": 5},
+        {"machineName": "H5P.MultiChoice", "majorVersion": 1, "minorVersion": 16}
+      ],
+      "title": "OER Grundlagen Quiz"
+    },
+    "params": {
+      "question": "Was bedeutet OER?",
+      "answers": [
+        {"text": "Open Educational Resources", "correct": true},
+        {"text": "Online Education Rooms", "correct": false}
+      ]
+    }
+  }
+}
+```
+
+#### 2. Opening the Editor Interface
+
+When you access the editor interface through the URL:
+
+```
+http://localhost:8080/h5p/edit/{contentId}
+```
+
+The system loads the H5P editor with the content parameters pre-filled. However, it's important to understand that you're preparing to create a new content item based on these parameters, not directly modifying the existing content.
+
+The editor interface depends on the content type, but generally includes:
+
+- Title field for the content
+- Metadata fields (accessible via a button)
+- Content-specific fields (questions, answers, media, etc.)
+- Preview option
+
+#### 3. Making Changes to Content
+
+There are two approaches to modify H5P content:
+
+##### A. Creating a New Version (Standard Approach)
+
+When submitting changes through the H5P editor UI, the system actually uses the `/h5p/new` endpoint to create a new content item with your modifications, rather than updating the existing content. If using the API directly, you would:
+
+```bash
+# Create new version of content based on existing parameters
+curl -X POST "http://localhost:8080/h5p/new" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "library": "H5P.MultiChoice 1.16",
+    "params": {
+      "metadata": {
+        "title": "Updated OER Quiz",
+        "license": "U"
+      },
+      "params": {
+        "question": "Was bedeutet OER? (Updated)",
+        "answers": [
+          {"text": "Open Educational Resources", "correct": true},
+          {"text": "Online Education Rooms", "correct": false},
+          {"text": "Open Electronic Records", "correct": false}
+        ]
+      }
+    }
+  }'
+```
+
+The response will include a new content ID:
+
+```json
+{"contentId": 2020504142}
+```
+
+##### B. Updating Existing Content (Alternative Approach)
+
+Some H5P implementations also support direct updates to existing content using the PATCH method, though this doesn't create the version history that the standard approach provides:
+
+```bash
+# Update existing content directly
 curl -X PATCH "http://localhost:8080/h5p/content/{contentId}" \
   -H "Content-Type: application/json" \
   -d '{
     "library": "H5P.InteractiveVideo 1.27",
     "params": {
-      // Updated content parameters
-    },
-    "metadata": {
-      "title": "Updated Title",
-      "license": "U"
+      "metadata": {
+        "title": "Updated Title",
+        "license": "U"
+      },
+      "params": {
+        "interactiveVideo": {
+          "video": {
+            "startScreenOptions": {
+              "title": "Updated Video Title",
+              "hideStartTitle": false
+            },
+            "files": [
+              {
+                "path": "videos/video-612MMAcN.mp4",
+                "mime": "video/mp4",
+                "copyright": {"license": "U"}
+              }
+            ]
+          }
+        }
+      }
     }
   }'
 ```
 
-### Viewing Content
+The request must include:
+- The complete `library` identifier with version
+- The `params` object with both `metadata` and content-specific parameters
+- Any new or modified content elements
 
-To view or play content:
+#### 4. Content Version Management
+
+Since the standard editing approach creates a new content version with a new ID, consider implementing version management in your application:
+
+1. **Track Content Versions**: Maintain a mapping between original content and its subsequent versions
+2. **Update References**: If your application references H5P content by ID, update these references when new versions are created
+3. **Clean Up Old Versions**: Implement a policy for deleting outdated versions to prevent accumulation of unused content
+
+#### 5. Handling Content-Specific Editing
+
+Different content types have unique editing requirements:
+
+**Multiple Choice:**
+- Modifying the `question` field updates the question text
+- Adding, removing, or updating elements in the `answers` array changes the available options
+- Setting `correct: true` marks an answer as correct
+
+**Interactive Video:**
+- Interactions are stored in the `interactiveVideo.assets.interactions` array
+- Each interaction includes position (`x`, `y`), time range (`duration`), and type-specific parameters
+- To add a new interaction, append to the interactions array with the appropriate library and parameters
+
+**Interactive Book:**
+- Book content is organized in `chapters` array
+- Each chapter uses `H5P.Column` library to structure its content
+- To add a new chapter, append to the chapters array with appropriate structure
+
+#### 6. Uploading New Media Files
+
+If your edits include new media files, upload them before creating the new content version:
 
 ```bash
-# Get/Play H5P content by ID
-curl -X GET "http://localhost:8080/h5p/play/{contentId}"
+# Upload a new file for the content
+curl -X POST "http://localhost:8080/h5p/content/{contentId}/files" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/path/to/new_image.jpg" \
+  -F "field=images" \
+  -F "contentId={contentId}"
+```
+
+The response includes the path to use in your content parameters:
+
+```json
+{
+  "path": "images/new_image-8f7e2d4b.jpg"
+}
+```
+
+#### 7. Testing the Updated Content
+
+After creating a new version or updating existing content, you can view it at:
+
+```
+http://localhost:8080/h5p/play/{contentId}
+```
+
+If using the standard approach, replace `{contentId}` with the new ID returned when creating the new version:
+
+```
+http://localhost:8080/h5p/play/{newContentId}
+```
+
+Note that when using the version-based approach, the original content will still be accessible at its original URL.
+
+### Editing Best Practices
+
+When editing H5P content via the API, follow these best practices:
+
+1. **Preserve Structure**: Always maintain the overall structure of the content parameters.
+
+2. **Complete Updates**: Include all parameters in your update request, not just the changed portions.
+
+3. **Version Compatibility**: Ensure the library version in your update matches the original content's version.
+
+4. **Media Management**: When updating media files, use the proper file upload endpoint before referencing them in content parameters.
+
+5. **Backup Before Editing**: Before making significant changes, consider downloading a copy of the content using:
+   ```bash
+   curl -X GET "http://localhost:8080/h5p/download/{contentId}" --output backup.h5p
+   ```
+
+6. **Incremental Edits**: For complex content types, make small, incremental changes rather than attempting to modify everything at once.
+
+7. **Testing**: Always test the edited content after making changes to ensure it behaves as expected.
+
+### Common Editing Operations
+
+Here are examples of common editing operations for different content types:
+
+**Adding an answer option to Multiple Choice:**
+```json
+{
+  "library": "H5P.MultiChoice 1.16",
+  "params": {
+    "metadata": { "title": "Quiz Title" },
+    "params": {
+      "question": "Original question",
+      "answers": [
+        {"text": "Existing option 1", "correct": true},
+        {"text": "Existing option 2", "correct": false},
+        {"text": "New option", "correct": false}
+      ]
+    }
+  }
+}
+```
+
+**Updating an image in Course Presentation:**
+```json
+{
+  "library": "H5P.CoursePresentation 1.25",
+  "params": {
+    "metadata": { "title": "Presentation Title" },
+    "params": {
+      "presentation": {
+        "slides": [
+          {
+            "elements": [
+              {
+                "action": {
+                  "library": "H5P.Image 1.1",
+                  "params": {
+                    "file": {
+                      "path": "images/new_image-8f7e2d4b.jpg",
+                      "mime": "image/jpeg",
+                      "copyright": { "license": "U" }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+**Adding a page to Interactive Book:**
+```json
+{
+  "library": "H5P.InteractiveBook 1.11",
+  "params": {
+    "metadata": { "title": "Book Title" },
+    "params": {
+      "chapters": [
+        // Existing chapters here
+        {
+          "params": {
+            "content": [
+              {
+                "content": {
+                  "library": "H5P.AdvancedText 1.1",
+                  "params": {
+                    "text": "<p>New chapter content</p>"
+                  }
+                }
+              }
+            ]
+          },
+          "library": "H5P.Column 1.18",
+          "metadata": {
+            "title": "New Chapter Title"
+          }
+        }
+      ]
+    }
+  }
+}
 ```
 
 ### Retrieving Content Parameters
@@ -283,45 +588,14 @@ curl -X GET "http://localhost:8080/h5p/params/{contentId}" \
   -H "Accept: application/json"
 ```
 
-This endpoint returns the full JSON structure of the content, including:
-- Library information (main library and all dependencies)
-- Metadata (title, license, language settings)
-- Complete parameters structure with all nested content elements
-- Library dependencies with version information
+### Viewing Content
 
-Example response structure for a Branching Scenario:
-```json
-{
-  "h5p": {
-    "mainLibrary": "H5P.BranchingScenario",
-    "preloadedDependencies": [
-      {"machineName": "H5P.CoursePresentation", "majorVersion": 1, "minorVersion": 25},
-      {"machineName": "H5P.BranchingQuestion", "majorVersion": 1, "minorVersion": 0},
-      // Additional dependencies...
-    ],
-    "title": "My Branching Scenario",
-    // Additional metadata...
-  },
-  "library": "H5P.BranchingScenario 1.8",
-  "params": {
-    "metadata": {/* content metadata */},
-    "params": {
-      "branchingScenario": {
-        "content": [
-          // Array of content objects with their parameters
-        ],
-        // Additional settings...
-      }
-    }
-  }
-}
+To view or play content:
+
+```bash
+# Get/Play H5P content by ID
+curl -X GET "http://localhost:8080/h5p/play/{contentId}"
 ```
-
-This endpoint is particularly valuable for:
-- Understanding the structure of existing content
-- Creating similar content with modifications
-- Debugging content issues
-- Developing automation tools for content creation or migration
 
 ### Downloading Content
 
@@ -472,6 +746,242 @@ In this example, we can see a real-world implementation of combining multiple H5
      - A summary page showing completion status of all interactions
      - Full-screen mode for focused learning
      - Support for multilingual content
+
+   c) **Course Presentation**:
+   - Provides a slide-based approach for organizing content
+   - Each slide can contain multiple content types
+   - Navigation is typically linear but can include custom navigation options
+   - Supports a wide range of embedded content types
+
+   d) **Column**:
+   - Arranges multiple content vertically on a single page
+   - Simpler container that focuses on layout rather than interactive navigation
+   - Useful for combining related content elements in a single view
+
+### Example: Interactive Video with Multiple Choice and True/False Questions
+
+Our analysis of the content with ID `2893205493` shows it contains an Interactive Video with embedded question elements:
+
+```json
+{
+  "interactiveVideo": {
+    "video": {
+      "startScreenOptions": {
+        "title": "Video with Questions",
+        "hideStartTitle": false
+      },
+      "files": [
+        {
+          "path": "videos/video-612MMAcN.mp4",
+          "mime": "video/mp4",
+          "copyright": {"license": "U"}
+        }
+      ]
+    },
+    "assets": {
+      "interactions": [
+        {
+          "library": "H5P.MultiChoice 1.16",
+          "params": {
+            "question": "What is shown in this video?",
+            "answers": [
+              {"text": "Option 1", "correct": true},
+              {"text": "Option 2", "correct": false}
+            ]
+          },
+          "duration": {"from": 15, "to": 30},
+          "x": 30,
+          "y": 30,
+          "pause": true
+        },
+        {
+          "library": "H5P.TrueFalse 1.8",
+          "params": {
+            "question": "Is H5P interactive?",
+            "correct": "true",
+            "l10n": {"trueText": "True", "falseText": "False"}
+          },
+          "duration": {"from": 45, "to": 60},
+          "x": 70,
+          "y": 40,
+          "pause": true
+        }
+      ]
+    },
+    "summary": {
+      "task": {
+        "library": "H5P.Summary 1.10",
+        "params": {"intro": "Choose the correct statement."}
+      },
+      "displayAt": 3
+    }
+  }
+}
+```
+
+This example shows:
+- Two question interactions at different timestamps (15s and 45s)
+- Different question types (Multiple Choice and True/False)
+- Both questions are configured to pause the video when they appear
+- A summary task appears at the end of the video
+
+### Example: Branching Scenario with Multiple Content Types
+
+The Branching Scenario content type provides a powerful non-linear navigation structure where users choose their own path through the content. From our analysis of content ID `975960658`, we can see how it creates a decision tree with different embedded content types:
+
+```json
+{
+  "library": "H5P.BranchingScenario 1.8",
+  "params": {
+    "branchingScenario": {
+      "content": [
+        {
+          "type": {
+            "library": "H5P.CoursePresentation 1.25",
+            "params": {
+              "presentation": {
+                "slides": [
+                  {
+                    "elements": [
+                      {
+                        "action": {
+                          "library": "H5P.AdvancedText 1.1",
+                          "params": {
+                            "text": "<p>ttttt</p>"
+                          }
+                        }
+                      },
+                      {
+                        "action": {
+                          "library": "H5P.Image 1.1",
+                          "params": {
+                            "file": {
+                              "path": "images/image-b5e77ck4.png",
+                              "mime": "image/png"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "contentId": 0,
+          "nextContentId": 1
+        },
+        {
+          "type": {
+            "library": "H5P.BranchingQuestion 1.0",
+            "params": {
+              "branchingQuestion": {
+                "alternatives": [
+                  {
+                    "nextContentId": 2,
+                    "text": "xx"
+                  },
+                  {
+                    "nextContentId": 3,
+                    "text": "xx3"
+                  }
+                ],
+                "question": "<p>xx oder xx3</p>"
+              }
+            }
+          },
+          "contentId": 1,
+          "nextContentId": -1
+        },
+        {
+          "type": {
+            "library": "H5P.CoursePresentation 1.25",
+            "params": {
+              "presentation": {
+                "slides": [
+                  {
+                    "elements": [
+                      {
+                        "action": {
+                          "library": "H5P.Blanks 1.14",
+                          "params": {
+                            "text": "Trage die fehlenden Wörter ein!",
+                            "questions": [
+                              "<p>H5P-Inhalte können mit einem *Browser/Web-Browser:Etwas, das du jeden Tag nutzt* betrachtet werden.</p>"
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "contentId": 2,
+          "nextContentId": -1
+        },
+        {
+          "type": {
+            "library": "H5P.AdvancedText 1.1",
+            "params": {
+              "text": "<p>blabla</p>"
+            }
+          },
+          "contentId": 3,
+          "nextContentId": -1
+        }
+      ],
+      "startScreen": {
+        "startScreenTitle": "",
+        "startScreenSubtitle": ""
+      },
+      "endScreens": [
+        {
+          "endScreenTitle": "",
+          "endScreenSubtitle": "",
+          "contentId": -1
+        }
+      ],
+      "behaviour": {
+        "enableBackwardsNavigation": false,
+        "randomizeBranchingQuestions": false
+      }
+    }
+  }
+}
+```
+
+This structure shows how a Branching Scenario works:
+
+1. **Content Array**: The scenario consists of an array of content objects, each with a unique `contentId`.
+
+2. **Navigation Flow**:
+   - Each content item has a `nextContentId` that determines where to go next 
+   - A `nextContentId` of `-1` indicates an endpoint in the flow
+   - Branching questions have multiple `alternatives`, each with its own `nextContentId`
+
+3. **Content Types Used**:
+   - `H5P.CoursePresentation`: Used for content screens with multiple elements
+   - `H5P.BranchingQuestion`: Creates decision points with multiple paths
+   - `H5P.AdvancedText`: Simple text content
+   - `H5P.Image`: Image content
+   - `H5P.Blanks`: Fill-in-the-blanks activity embedded in a Course Presentation
+
+4. **Flow Structure**:
+   - The scenario starts with a Course Presentation (contentId: 0)
+   - Then presents a Branching Question (contentId: 1)
+   - Depending on the user's choice, they proceed to either:
+     - A Course Presentation with a Fill-in-the-blanks activity (contentId: 2)
+     - A simple text content (contentId: 3)
+
+5. **Multi-level Nesting**:
+   - The structure demonstrates three levels of nesting:
+     - Level 1: Branching Scenario as the container
+     - Level 2: Course Presentation as an embedded content type
+     - Level 3: Interactive elements (Text, Image, Blanks) embedded within Course Presentation
+
+This example illustrates how the Branching Scenario creates a complete interactive experience by combining multiple content types into a decision-tree structure, allowing for personalized learning paths.
 
 ### Example: Interactive Book Structure
 
