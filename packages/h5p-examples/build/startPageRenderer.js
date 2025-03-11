@@ -25,7 +25,7 @@ function render(editor) {
                 <h1>H5P REST API Server</h1>
                 <div class="alert alert-info">
                     <p>This server provides a REST API for H5P content. Access the API endpoints with the prefix <code>/h5p/</code></p>
-                    <p>For API documentation and usage instructions, please refer to the <a href="https://github.com/pascalkienast/H5P-AI-Generator">GitHub repository</a> and the HOWTO.md file.</p>
+                    <p>For API documentation and usage instructions, please refer to the <a href="https://github.com/pascalkienast/H5P-AI-Generator">GitHub repository</a> and the README.md file.</p>
                     <p>Authentication: API endpoints can be accessed using API keys in the request header: <code>x-api-key: YOUR_API_KEY</code></p>
                 </div>
                 
